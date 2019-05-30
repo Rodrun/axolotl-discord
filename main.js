@@ -14,9 +14,15 @@ for (let p = 0; p < CACHE_SIZE; p++) {
 		for (const img of images) {
 			urls.push(img["url"])
 		}
+	}).catch(e => {
+		console.log("An error occurred in caching image data")
 	})
 }
 
+
+client.on("ready", () => {
+	console.log("Logged in")
+})
 
 client.on("message", msg => {
 	if (mgs.content == "!axolotl") {
@@ -25,3 +31,5 @@ client.on("message", msg => {
 		msg.reply("Fuck you too")
 	}
 })
+
+client.login(process.env.DISCORD_TOKEN)
