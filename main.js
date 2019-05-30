@@ -16,6 +16,7 @@ for (let p = 0; p < CACHE_SIZE; p++) {
 		}
 	}).catch(e => {
 		console.log("An error occurred in caching image data")
+		console.log(e)
 	})
 }
 
