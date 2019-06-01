@@ -1,35 +1,33 @@
 const Discord = require("discord.js")
-const GoogleImages = require("google-images")
+const images = require("duckduckgo-images-api")
 
 const client = new Discord.Client()
-const images = new GoogleImages(process.env.CSE_ID, process.env.CSE_KEY)
 
 const OFFENSIVE_REGEX = /(stupid(\s)?|fuck(ing)?|(i(\s)?)?hate)(\s)?axolotl(s)?/g
 
-// Cache image URLs
+// Store unique URLs
+let accessReady = false
 const CACHE_SIZE = process.env.CACHE_SIZE | 5 // In pages
-let urls = []
-for (let p = 0; p < CACHE_SIZE; p++) {
-	images.search("axolotl animal", {page:p}).then(images => {
-		for (const img of images) {
-			urls.push(img["url"])
-		}
-	}).catch(e => {
-		console.log("An error occurred in caching image data")
-		console.log(e)
-	})
-}
-
+let imageUrls = []
+images.image_search({ query: "axolotl animal", iterations: CACHE_SIZE}).then(results => {
+	for (const result of results) {
+		imageUrls.push(result["image"])
+	}
+	accessReady = true
+	console.log(accessReady)
+})
 
 client.on("ready", () => {
 	console.log("Logged in")
 })
 
 client.on("message", msg => {
-	if (mgs.content == "!axolotl") {
-		const choice = getRandomImage()
+	if (msg.content == "!axolotl" && accessReady) {
+		let randIndex = Math.floor(Math.random() * imageUrls.length)
+		const choice = imageUrls[randIndex]
+		msg.reply(choice)
 	} else if (msg.content.toLowerCase().match(OFFENSIVE_REGEX)) {
-		msg.reply("Fuck you too")
+		msg.reply("Fuck you too, " + msg.author.username)
 	}
 })
 
